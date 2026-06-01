@@ -1,0 +1,89 @@
+{#-
+  URDF fragment: link + visual + joint for YDLidar X4.
+  When gazebo=true, also injects the Gazebo sensor plugin.
+
+  Physical dimensions: radius 35.2 mm, height 98.7 mm, mass 0.190 kg.
+  Link origin at the laser scan plane (top of rotating head).
+  Visual is offset -0.049 m in Z to align with the physical body centre.
+
+  Variables always required:
+    prefix, sensor_name, frame_id,
+    x, y, z, roll, pitch, yaw  (pose relative to base_footprint),
+    sensor_share               (absolute path to this package's share dir)
+
+  Additional variables required only when gazebo=true:
+    namespace, angle_min, angle_max, range_min, range_max,
+    frequency, resolution, use_gpu,
+    noise_enabled, noise_mean, noise_stddev
+#}
+
+  <link name="{{ prefix }}{{ frame_id }}">
+    <inertial>
+      <origin xyz="0.0 0.0 -0.049" rpy="0 0 0"/>
+      <mass value="0.190"/>
+      <inertia ixx="0.000213" ixy="0" ixz="0"
+               iyy="0.000213" iyz="0"
+               izz="0.000118"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0 0.0 -0.049" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <!-- <mesh filename="file://{{ sensor_share }}/description/ydlidar_x4.dae"/> -->
+        <cylinder length="0.0987" radius="0.0352"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="{{ prefix }}{{ sensor_name }}_joint" type="fixed">
+    <parent link="{{ prefix }}base_footprint"/>
+    <child link="{{ prefix }}{{ frame_id }}"/>
+    <origin xyz="{{ x }} {{ y }} {{ z }}" rpy="{{ roll }} {{ pitch }} {{ yaw }}"/>
+  </joint>
+
+  <gazebo reference="{{ prefix }}{{ sensor_name }}_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+  </gazebo>
+
+{%- if gazebo | default(false) %}
+{%- set PI = 3.14159265358979 %}
+{%- set angle_min_rad = angle_min * PI / 180.0 %}
+{%- set angle_max_rad = angle_max * PI / 180.0 %}
+{%- set samples = ((angle_max - angle_min) / resolution) | int %}
+
+  <gazebo reference="{{ prefix }}{{ frame_id }}">
+    <sensor name="{{ prefix }}ydlidar_x4" type="{{ 'gpu_lidar' if use_gpu else 'lidar' }}">
+      <topic>{{ ('/' + namespace + '/') if namespace else '/' }}ydlidar_x4/scan</topic>
+      <update_rate>{{ frequency }}</update_rate>
+      <visualize>true</visualize>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>{{ samples }}</samples>
+            <resolution>1</resolution>
+            <min_angle>{{ angle_min_rad }}</min_angle>
+            <max_angle>{{ angle_max_rad }}</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>0.1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>0.0</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>{{ range_min }}</min>
+          <max>{{ range_max }}</max>
+          <resolution>0.01</resolution>
+        </range>
+{%- if noise_enabled %}
+        <noise>
+          <type>gaussian</type>
+          <mean>{{ noise_mean | default(0.0) }}</mean>
+          <stddev>{{ noise_stddev | default(0.015) }}</stddev>
+        </noise>
+{%- endif %}
+      </lidar>
+      <always_on>true</always_on>
+    </sensor>
+  </gazebo>
+{%- endif %}

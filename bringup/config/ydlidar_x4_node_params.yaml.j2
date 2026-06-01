@@ -1,0 +1,17 @@
+ydlidar_node:
+  ros__parameters:
+    port: "{{ port }}"
+    frame_id: "ydlidar_x4_link"
+    baudrate: {{ baudrate }}
+    samp_rate: {{ samp_rate }}
+    resolution_fixed: true
+    singleChannel: false
+    auto_reconnect: true
+    reversion: {{ reversion | lower }}
+    isToFLidar: false
+    angle_max: {{ angle_max }}
+    angle_min: {{ angle_min }}
+    max_range: {{ range_max }}
+    min_range: {{ range_min }}
+    frequency: {{ frequency }}
+    ignore_array: "{{ ignore_array }}"

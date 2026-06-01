@@ -1,0 +1,37 @@
+# Runtime parameters for the YDLidar X4 LiDAR sensor.
+# Physical constants (mass, inertia, dimensions) are hardcoded in sensor.sdf.j2.
+
+hardware:
+  frame_id: ydlidar_x4_link
+  weight: 0.190      # kg
+  mesh: ""           # no mesh available — SDF uses inline cylinder geometry
+
+operation:
+  port: "/dev/ydlidar"
+  baudrate: 128000
+  samp_rate: 5
+  resolution_fixed: true
+  singleChannel: false
+  auto_reconnect: true
+  reversion: true
+  isToFLidar: false
+  frequency: 7.0           # Hz — X4 default; range 6-12 Hz via PWM
+  angle_min: -180.0        # degrees
+  angle_max:  180.0        # degrees
+  range_min: 0.12          # m — X4 minimum range
+  range_max: 10.0          # m — X4 maximum range
+  resolution: 0.5          # deg — approx 5000 sps / 7 Hz / 360° ≈ 0.5 deg/sample
+  ignore_array: ""
+
+simulation:
+  angle_min: -180.0
+  angle_max:  180.0
+  range_min: 0.12
+  range_max: 10.0
+  noise:
+    enabled: true
+    type: gaussian
+    mean: 0.0
+    stddev: 0.015
+    bias_mean: 0.0
+    bias_stddev: 0.0
