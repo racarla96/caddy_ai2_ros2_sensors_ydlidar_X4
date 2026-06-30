@@ -99,7 +99,7 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        ydlidar_x4_link:
+        lidar_2d_ydlidar_x4_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -115,7 +115,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: ydlidar_x4_link
+    Fixed Frame: lidar_2d_ydlidar_x4_link
     Frame Rate: 30
   Name: root
   Tools:

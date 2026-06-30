@@ -2,7 +2,7 @@
 # Physical constants (mass, inertia, dimensions) are hardcoded in sensor.sdf.j2.
 
 hardware:
-  frame_id: ydlidar_x4_link
+  frame_id: lidar_2d_ydlidar_x4_link
   weight: 0.190      # kg
   mesh: ""           # no mesh available — SDF uses inline cylinder geometry
 
